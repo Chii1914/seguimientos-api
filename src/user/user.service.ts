@@ -1,10 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { MailerController } from 'src/mailer/mailer.controller';
+import { MailerService } from 'src/mailer/mailer.service';
+import { emitWarning } from 'process';
 
 @Injectable()
 export class UserService {
-  create(createUserDto: CreateUserDto) {
+
+  constructor(
+    private mailerService: MailerService,
+  ){}
+
+  async create(createUserDto: CreateUserDto) {
+    await this.mailerService.sendMail('nataniel.palacios@alumnos.uv.cl', 'Nataniel', 'Hola, se te envió un correo')
     return 'This action adds a new user';
   }
 
@@ -23,4 +32,5 @@ export class UserService {
   remove(id: number) {
     return `This action removes a #${id} user`;
   }
+
 }
