@@ -13,9 +13,9 @@ export class AuthService {
   constructor(
   //@InjectRepository(Usuario) private usuarioRepository: Repository<Usuario>,
   //@InjectRepository(Alumno) private alumnoRepository: Repository<Alumno>,
-  private jwtService: JwtService,
+    private jwtService: JwtService,
   @InjectModel('User') private userModel: Model<User>
-  ) { }
+) { }
 
   async validateOAuthLogin(thirdPartyId: string, provider: string, email: string, rol: string, sede: string): Promise<string> {
     const payload = {
@@ -32,7 +32,7 @@ export class AuthService {
   }
 
   async findUser(email: string) {
-    const user = await this.userModel.findOne({ email });
+    const user = await this.userRepository.findOne({ where: { mail: email } });
     if (!user) {
       return null;
     } 
