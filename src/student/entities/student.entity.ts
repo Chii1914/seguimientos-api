@@ -1,5 +1,5 @@
 
-import { Column, Entity, OneToMany, OneToOne } from "typeorm";
+import { Column, Entity, OneToMany, JoinColumn, OneToOne } from "typeorm";
 import { FollowUp } from "../../follow-up/entities/follow-up.entity";
 import { Motives } from "../../motives/entities/motive.entity";
 import { StudentState } from "../../student-state/entities/student-state.entity";
@@ -54,9 +54,15 @@ export class Student {
   @OneToMany(() => FollowUp, (followUp) => followUp.mail2)
   followUps: FollowUp[];
 
-  @OneToOne(() => Motives, (motives) => motives.mail2)
+  @OneToOne(() => Motives, (motives) => motives.mail2, {
+    nullable: true
+  })
+  @JoinColumn([{ name: "mail", referencedColumnName: "mail" }])
   motives: Motives;
 
-  @OneToOne(() => StudentState, (studentState) => studentState.mail2)
+  @OneToOne(() => StudentState, (studentState) => studentState.mail2, {
+    nullable: true
+  })
+  @JoinColumn([{ name: "mail", referencedColumnName: "mail" }])
   studentState: StudentState;
 }
