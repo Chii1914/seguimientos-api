@@ -2,7 +2,6 @@ import { StudentModule } from './student/student.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigService, ConfigModule } from '@nestjs/config';
-import { StudentModule } from './student/student.module';
 import { FollowUpModule } from './follow-up/follow-up.module';
 import { MotivesModule } from './motives/motives.module';
 import { StudentStateModule } from './student-state/student-state.module';
