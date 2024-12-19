@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigService, ConfigModule } from '@nestjs/config';
+import { StudentModule } from './student/student.module';
+import { FollowUpModule } from './follow-up/follow-up.module';
 
 
 @Module({
@@ -22,6 +24,8 @@ import { ConfigService, ConfigModule } from '@nestjs/config';
     }),
     inject: [ConfigService], 
   }),
+  StudentModule,
+  FollowUpModule,
 ],
   controllers: [],
   providers: [],
