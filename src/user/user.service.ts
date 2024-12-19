@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { MailerController } from 'src/mailer/mailer.controller';
 import { MailerService } from 'src/mailer/mailer.service';
 import { emitWarning } from 'process';
 

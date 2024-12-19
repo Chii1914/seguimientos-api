@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
 import { DockService } from './dock.service';
-import { DockController } from './dock.controller';
 
 @Module({
-  controllers: [DockController],
+  controllers: [],
   providers: [DockService],
 })
 export class DockModule {}
