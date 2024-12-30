@@ -1,16 +1,21 @@
 
-/*
+
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Request } from 'express';
 import * as jwt from 'jsonwebtoken';
-import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
-import { User } from '../user/schema/user.schema';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/user/entities/user.entity';
+import { In, Repository } from 'typeorm';
+import { Student } from 'src/student/entities/student.entity';
+
 
 @Injectable()
 export class SessionAuthGuard implements CanActivate {
-    constructor(@InjectModel('User') private userModel: Model<User>) { }
+    constructor(
+        @InjectRepository(User) private userRepository: Repository<User>,
+       @InjectRepository(Student) private studentRepository: Repository<Student>, 
+    ) { }
 
     canActivate(
         context: ExecutionContext,
@@ -21,22 +26,24 @@ export class SessionAuthGuard implements CanActivate {
 
     private async validateRequest(request: Request): Promise<boolean> {
         try {
-            const authToken = request.headers['authorization']?.split(' ')[1]; 
-
+            const authToken = request.headers['authorization']
             if (!authToken) {
                 return false;
             }
-            const user = await this.userModel.findOne({ SessionString: authToken });
-            const token = user.Gtoken;
+            const user = await this.userRepository.findOne({ where: { sessionString: authToken } }) 
+            || await this.studentRepository.findOne({ where: { sessionString: authToken } });
             
+            if (!user) {
+                return false;
+            }  
             if (!user) {
                 return false;
             }
             
-            if (!token) {
+            if (!user.gtoken) {
                 return false;
             }
-            const decoded = jwt.verify(user.Gtoken, process.env.JWT_SECRET_KEY);
+            const decoded = jwt.verify(user.gtoken, process.env.JWT_SECRET_KEY);
             if (!decoded || !decoded.sub) {
                 return false;
             }
@@ -47,4 +54,3 @@ export class SessionAuthGuard implements CanActivate {
         return true; 
     }
 }
-    */
