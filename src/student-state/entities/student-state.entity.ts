@@ -17,8 +17,8 @@ export class StudentState {
   observation: string | null;
 
   @OneToOne(() => Student, (student) => student.studentState, {
-    onDelete: "NO ACTION",
-    onUpdate: "NO ACTION",
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
   })
   @JoinColumn([{ name: "mail", referencedColumnName: "mail" }])
   mail2: Student;

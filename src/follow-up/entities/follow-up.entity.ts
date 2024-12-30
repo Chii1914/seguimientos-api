@@ -41,8 +41,8 @@ export class FollowUp {
   otro: string | null;
 
   @ManyToOne(() => Student, (student) => student.followUps, {
-    onDelete: "NO ACTION",
-    onUpdate: "NO ACTION",
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
   })
   @JoinColumn([{ name: "mail", referencedColumnName: "mail" }])
   mail2: Student;

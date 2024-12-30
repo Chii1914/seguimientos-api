@@ -71,8 +71,8 @@ export class Motives {
   justEconomicoAcademico: string | null;
 
   @OneToOne(() => Student, (student) => student.motives, {
-    onDelete: "NO ACTION",
-    onUpdate: "NO ACTION",
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
   })
   @JoinColumn([{ name: "mail", referencedColumnName: "mail" }])
   mail2: Student;
