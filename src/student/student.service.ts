@@ -6,12 +6,14 @@ import { Student } from './entities/student.entity';
 import { Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
+import { FollowUp } from 'src/follow-up/entities/follow-up.entity';
 
 @Injectable()
 export class StudentService {
 
   constructor(
     @InjectRepository(Student) private studentRepository: Repository<Student>,
+    @InjectRepository(FollowUp) private followUpRepository: Repository<FollowUp>
   ){}
 
   async create(createStudentDto: CreateStudentDto) {
@@ -54,7 +56,20 @@ export class StudentService {
   }
 
  }
-
+  
+  async StudentandMotives(reasons?: string) {
+    if (reasons && reasons.length > 0) {
+      return await this.studentRepository
+        .createQueryBuilder('student')
+        .leftJoinAndSelect('student.followUps', 'followUp')
+        .where('followUp.reason IN (:...reasons)', { reasons })
+        .getMany();
+    }
+    // Si no hay motivo, devolver todos los estudiantes
+    return await this.studentRepository.find({
+      relations: ['followUps'],
+    });
+  }
 
   async findAll() {
     return await this.studentRepository.find();
