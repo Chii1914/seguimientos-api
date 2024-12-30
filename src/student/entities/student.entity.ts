@@ -51,18 +51,18 @@ export class Student {
   })
   sede: "Valparaíso" | "Santiago" | "San Felipe" | null;
 
+  @Column("tinyint", { name: "verified", nullable: true, width: 1 })
+  verified: boolean | null;
+
+  @Column("text", { name: "remedialAction", nullable: true })
+  remedialAction: string | null;
+
   @OneToMany(() => FollowUp, (followUp) => followUp.mail2)
   followUps: FollowUp[];
 
-  @OneToOne(() => Motives, (motives) => motives.mail2, {
-    nullable: true
-  })
-  @JoinColumn([{ name: "mail", referencedColumnName: "mail" }])
+  @OneToOne(() => Motives, (motives) => motives.mail2)
   motives: Motives;
 
-  @OneToOne(() => StudentState, (studentState) => studentState.mail2, {
-    nullable: true
-  })
-  @JoinColumn([{ name: "mail", referencedColumnName: "mail" }])
+  @OneToOne(() => StudentState, (studentState) => studentState.mail2)
   studentState: StudentState;
 }

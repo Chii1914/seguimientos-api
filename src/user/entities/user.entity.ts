@@ -22,4 +22,11 @@ export class User {
 
   @Column("varchar", { name: "motherLastName", nullable: true, length: 100 })
   motherLastName: string | null;
+
+  @Column("enum", {
+    name: "sede",
+    nullable: true,
+    enum: ["Valparaíso", "Santiago", "San Felipe", "all"],
+  })
+  sede: "Valparaíso" | "Santiago" | "San Felipe" | "all" | null;
 }
