@@ -6,6 +6,7 @@ import { FollowUpModule } from './follow-up/follow-up.module';
 import { MotivesModule } from './motives/motives.module';
 import { StudentStateModule } from './student-state/student-state.module';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -31,7 +32,8 @@ import { UserModule } from './user/user.module';
   FollowUpModule,
   MotivesModule,
   StudentStateModule,
-  UserModule
+  UserModule,
+  AuthModule
 ],
   controllers: [],
   providers: [],
