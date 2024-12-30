@@ -9,6 +9,9 @@ export class Student {
   @Column("varchar", { primary: true, name: "mail", length: 255 })
   mail: string;
 
+  @Column("text", { name: "gtoken", nullable: true})
+  gtoken: string | null;
+
   @Column("varchar", { name: "sessionString", nullable: true, length: 255 })
   sessionString: string | null;
 
