@@ -46,6 +46,7 @@ export class AuthController {
     } catch (err) {
 
       if (!res.headersSent) {
+        console.log(err)
         return res.status(500).json({ message: 'An error occurred' });
       }
     }
