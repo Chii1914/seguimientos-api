@@ -21,7 +21,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       done(new UnauthorizedException(), false);
     } else {
       const jwt = await this.authService.validateOAuthLogin(profile.id, 'google', email, user.rol, user.sede || null);
-      done(null, { jwt ,email: email});
+      done(null, { jwt ,email: email, rol: user.rol});
     }
   }
 }

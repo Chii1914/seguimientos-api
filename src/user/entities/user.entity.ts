@@ -5,7 +5,7 @@ export class User {
   @Column("varchar", { primary: true, name: "mail", length: 255 })
   mail: string;
 
-  @Column("varchar", { name: "gtoken", nullable: true, length: 255 })
+  @Column("text", { name: "gtoken", nullable: true })
   gtoken: string | null;
 
   @Column("varchar", { name: "sessionString", nullable: true, length: 255 })

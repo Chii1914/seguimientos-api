@@ -1,3 +1,5 @@
+
+/*
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Request } from 'express';
@@ -45,3 +47,4 @@ export class SessionAuthGuard implements CanActivate {
         return true; 
     }
 }
+    */

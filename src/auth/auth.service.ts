@@ -33,9 +33,9 @@ export class AuthService {
   async findUser(email: string) {
     const user = await this.userRepository.findOne({where: { mail: email }});
     if (!user) {
-      return null;
+      const student = await this.studentRepository.findOne({where: { mail: email }});
+      return {email: email, rol: "student", sede: student.sede || null};
     } 
-    
     return {email: email, rol: "admin", sede: user.sede || null};
     
 
@@ -62,6 +62,5 @@ export class AuthService {
       }
     }  
   */  
-    return { email: email, rol: "admin", sede: "sede" };
   }
 }

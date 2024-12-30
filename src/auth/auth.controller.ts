@@ -1,16 +1,16 @@
 import { Controller, Get, Req, UseGuards, Res } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { Request, Response } from 'express';
 import { Roles } from 'src/common/roles/roles.decorator';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { CustomGoogleAuthGuard } from 'src/guards/oauth.guard';
 import { v4 as uuidv4 } from 'uuid'; // Assuming you're using UUIDs for random strings
-import { SessionAuthGuard } from 'src/guards/session-auth.guard';
+//import { SessionAuthGuard } from 'src/guards/session-auth.guard';
 import * as jwt from 'jsonwebtoken';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Student } from 'src/student/entities/student.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
+import { Request, Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -32,8 +32,14 @@ export class AuthController {
   async googleAuthRedirect(@Req() req, @Res() res: Response) {
     try {
       const randomString = uuidv4();
-      await this.userModel.updateOne({ email: req.user.email }, { $set: { SessionString: randomString } }, { upsert: true });
-      await this.userModel.updateOne({ email: req.user.email }, { $set: { Gtoken: req.user.jwt } }, { upsert: true });
+      if(req.user.rol == 'student'){
+        await this.studentRepository.update({ mail: req.user.email }, { sessionString: randomString });
+        await this.studentRepository.update({ mail: req.user.email }, { gtoken: req.user.jwt });
+      }
+      else if (req.user.rol == 'admin'){
+        await this.userRepository.update({ mail: req.user.email }, { sessionString: randomString });
+        await this.userRepository.update({ mail: req.user.email }, { gtoken: req.user.jwt });
+      }
       if (!res.headersSent) {
         return res.redirect(`${process.env.FRONTEND_URL}/success?xvlf=${randomString}`);
       }
@@ -46,13 +52,13 @@ export class AuthController {
   }
 
   @Get('protected')
-  @UseGuards(SessionAuthGuard)
+  //@UseGuards(SessionAuthGuard)
   greet(@Req() req) {
     return "uwu";
   }
 
   @Get('verify')
-  @UseGuards(SessionAuthGuard)
+  //@UseGuards(SessionAuthGuard)
   verifyAlumno() { return true; }
 
 
