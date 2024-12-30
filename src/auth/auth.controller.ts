@@ -7,14 +7,17 @@ import { CustomGoogleAuthGuard } from 'src/guards/oauth.guard';
 import { v4 as uuidv4 } from 'uuid'; // Assuming you're using UUIDs for random strings
 import { SessionAuthGuard } from 'src/guards/session-auth.guard';
 import * as jwt from 'jsonwebtoken';
-
-import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
-import { User } from '../user/schema/user.schema';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Student } from 'src/student/entities/student.entity';
+import { User } from 'src/user/entities/user.entity';
+import { Repository } from 'typeorm';
 
 @Controller('auth')
 export class AuthController {
-  constructor(@InjectModel('User') private userModel: Model<User>) { }
+  constructor(
+    @InjectRepository(Student) private studentRepository: Repository<Student>,
+    @InjectRepository(User) private userRepository: Repository<User>,
+  ) { }
 
   @Get('google')
   @UseGuards(AuthGuard('google'))

@@ -1,20 +1,19 @@
 // src/auth/auth.service.ts
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
 import Mail from 'nodemailer/lib/mailer';
+import { Student } from 'src/student/entities/student.entity';
+import { User } from 'src/user/entities/user.entity';
+import { Repository } from 'typeorm';
 
-
-import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
-import { User } from '../user/schema/user.schema';
 
 @Injectable()
 export class AuthService {
   constructor(
-  //@InjectRepository(Usuario) private usuarioRepository: Repository<Usuario>,
-  //@InjectRepository(Alumno) private alumnoRepository: Repository<Alumno>,
   private jwtService: JwtService,
-  @InjectModel('User') private userModel: Model<User>
+  @InjectRepository(User) private userRepository: Repository<User>,
+  @InjectRepository(Student) private studentRepository: Repository<Student>,
   ) { }
 
   async validateOAuthLogin(thirdPartyId: string, provider: string, email: string, rol: string, sede: string): Promise<string> {
@@ -32,7 +31,7 @@ export class AuthService {
   }
 
   async findUser(email: string) {
-    const user = await this.userModel.findOne({ email });
+    const user = await this.userRepository.findOne({where: { mail: email }});
     if (!user) {
       return null;
     } 
