@@ -4,6 +4,8 @@ import { UpdateStudentDto } from './dto/update-student.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Student } from './entities/student.entity';
 import { Repository } from 'typeorm';
+import { plainToClass } from 'class-transformer';
+import { validate } from 'class-validator';
 
 @Injectable()
 export class StudentService {
@@ -26,20 +28,47 @@ export class StudentService {
       console.error(error);
     }
   }
-
-  findAll() {
-    return `This action returns all student`;
+ async register(data: Object){
+  try{
+    const student = {... data['student']};
+    let motives = {... data['motives']};
+    const studentDto= plainToClass(CreateStudentDto, student);
+    
+    const errors= await validate(studentDto);
+    const newStudent= await this.studentRepository.create(studentDto);
+    await this.studentRepository.save(newStudent);
+    
+    motives={...data['motives'], mail: student.mail};
+    const motivesDto = plainToClass(CreateStudentDto, motives);
+    
+    const newMotives= await this.studentRepository.create(motivesDto);
+    await this.studentRepository.save(newMotives);
+    
+    if (errors.length > 0){
+      return {errors}
+      
+    }
+  }
+  catch(error){
+    console.error(error);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} student`;
+ }
+
+
+  async findAll() {
+    return await this.studentRepository.find();
   }
 
-  update(id: number, updateStudentDto: UpdateStudentDto) {
-    return `This action updates a #${id} student`;
+  async findOne(id : string) {
+    return await this.studentRepository.findOne({where: {mail: id}});
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} student`;
+  async update(id: string, updateStudentDto: UpdateStudentDto) {
+    return await this.studentRepository.update(id, updateStudentDto);
+  }
+
+  async remove(id: string) {
+    return await this.studentRepository.softDelete(id);
   }
 }
