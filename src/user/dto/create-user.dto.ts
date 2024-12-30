@@ -1,4 +1,4 @@
-import { IsEmail, IsOptional, IsString } from "class-validator";
+import { IsEmail, IsEnum, isEnum, IsOptional, IsString } from "class-validator";
 
 export class CreateUserDto {
 
@@ -26,4 +26,11 @@ export class CreateUserDto {
     @IsOptional()
     @IsString()
     motherLastName
+    
+
+    @IsEnum(["Valparaíso", "Santiago", "San Felipe", "all"])
+    sede
+    
+
+
 }

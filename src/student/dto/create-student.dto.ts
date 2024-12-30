@@ -1,9 +1,13 @@
-import { IsEmail, IsOptional, IsString, IsInt, IsEnum } from "class-validator";
+import { IsEmail, IsOptional, IsString, IsInt, IsEnum, IsBoolean } from "class-validator";
 
 export class CreateStudentDto {
 
     @IsEmail()
     mail: string;
+
+    @IsOptional()
+    @IsString()
+    gtoken
 
     @IsOptional()
     @IsString()
@@ -40,6 +44,13 @@ export class CreateStudentDto {
 
     @IsEnum(["Valparaíso", "Santiago", "San Felipe"])
     sede: "Valparaíso" | "Santiago" | "San Felipe";
+
+    @IsBoolean()
+    verified
+
+    @IsOptional()
+    @IsString()
+    remedialAction
 
 }
 
