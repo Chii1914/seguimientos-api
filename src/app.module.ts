@@ -28,7 +28,6 @@ import { UserModule } from './user/user.module';
     }),
     inject: [ConfigService], 
   }),
-  AuthModule,
   StudentModule,
   FollowUpModule,
   MotivesModule,
