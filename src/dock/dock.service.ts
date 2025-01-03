@@ -1,22 +1,25 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
 @Injectable()
 export class DockService {
     
-    private readonly logger = new Logger(DockService.name);
+    private readonly uploadPath = path.join(__dirname, '..', 'uploads');
 
-    getStorageConfig(studentPk: string) {
-        return diskStorage({
-          destination: (req, file, cb) => {
-            const uploadPath = `./uploads/${studentPk}`;
-            cb(null, uploadPath);
-          },
-          filename: (req, file, cb) => {
-            const fileName = `${Date.now()}${extname(file.originalname)}`;
-            cb(null, fileName);
-          },
-        });
-      }
+    uploadCarnet(student: string){
 
+        if (!fs.existsSync(this.uploadPath)){
+            fs.mkdirSync(this.uploadPath);
+        }
+        const studentPath = path.join(this.uploadPath, student);
+        if (!fs.existsSync(studentPath)){
+            fs.mkdirSync(studentPath);
+        }
+        const carnetPath = path.join(studentPath, 'carnet');
+        if (!fs.existsSync(carnetPath)){
+            fs.mkdirSync(carnetPath);
+        }
+        return carnetPath;
+
+    }
 }
