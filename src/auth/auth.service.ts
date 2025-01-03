@@ -30,6 +30,7 @@ export class AuthService {
     return jwt;
   }
 
+  // localhost:3000/api/auth/google
   async findUser(email: string) {
     const user = await this.userRepository.findOne({where: { mail: email }});
     if (!user) {
