@@ -7,6 +7,7 @@ import { MotivesModule } from './motives/motives.module';
 import { StudentStateModule } from './student-state/student-state.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { DockModule } from './dock/dock.module';
 
 
 @Module({
@@ -33,7 +34,8 @@ import { AuthModule } from './auth/auth.module';
   MotivesModule,
   StudentStateModule,
   UserModule,
-  AuthModule
+  AuthModule,
+  DockModule
 ],
   controllers: [],
   providers: [],
