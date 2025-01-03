@@ -13,7 +13,7 @@ import { Student } from 'src/student/entities/student.entity';
 @Injectable()
 export class SessionAuthGuard implements CanActivate {
     constructor(
-        @InjectRepository(User) private userRepository: Repository<User>,
+       @InjectRepository(User) private userRepository: Repository<User>,
        @InjectRepository(Student) private studentRepository: Repository<Student>, 
     ) { }
 
