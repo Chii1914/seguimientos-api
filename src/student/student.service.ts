@@ -27,19 +27,23 @@ export class StudentService {
     }
   }
 
-  findAll() {
-    return `This action returns all student`;
+  async findAll() {
+    return await this.studentRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} student`;
+  async findOne(email: string) {
+    return await this.studentRepository.findOne({where:
+      {
+        mail: email
+      }
+    });
   }
 
-  update(id: number, updateStudentDto: UpdateStudentDto) {
-    return `This action updates a #${id} student`;
+  async update(mail: string, updateStudentDto: UpdateStudentDto) {
+    return await this.studentRepository.update(mail, updateStudentDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} student`;
+  async remove(mail: string) {
+    return await this.studentRepository.delete({mail});
   }
 }

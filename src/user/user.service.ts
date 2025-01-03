@@ -48,7 +48,7 @@ export class UserService {
   }
 
   async remove(mail: string) {
-    return await this.userRepository.softDelete({mail});
+    return await this.userRepository.delete({mail});
   }
 
 }
