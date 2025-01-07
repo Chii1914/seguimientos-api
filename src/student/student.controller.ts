@@ -51,14 +51,19 @@ export class StudentController {
   @Post('upload/documents')
   @UseGuards(SessionAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
-  uploadDocuments(@UploadedFiles() files: Array<Express.Multer.File>,  @Req() req: CustomRequest){
+  uploadDocuments(@UploadedFiles() files: Array<Express.Multer.File>, @Req() req: CustomRequest, @Body() custom: {email: string}){
+    if(custom.email){
+      //Caso en el que admin que sube docs desde el dashboard
+      return this.dockService.uploadDocument(custom.email, files);
+    }
+    //Caso en el que el alumno es el que sube los documentos desde su vista
     return this.dockService.uploadDocument(req.user.email, files);
   }
 
   @Get('filenames')
   @UseGuards(SessionAuthGuard)
-  getFileNames(@Req() req: CustomRequest){
-    return this.dockService.getFileNames(req.user.email);
+  getFileNames(@Body() custom: {email: string}){
+    return this.dockService.getFileNames(custom.email);
   } 
   
 
