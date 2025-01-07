@@ -1,13 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFiles, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFiles, UseGuards, Req, BadRequestException } from '@nestjs/common';
 import { StudentService } from './student.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { AnyFilesInterceptor, FileFieldsInterceptor } from '@nestjs/platform-express';
 import { DockService } from 'src/dock/dock.service';
 import { SessionAuthGuard } from 'src/guards/session-auth.guard';
 import { Roles } from 'src/common/roles/roles.decorator';
 import { RolesGuard } from 'src/common/roles/roles.guard';
 import { CustomRequest } from './types/request';
+import { validate } from 'class-validator';
 @Controller('student')
 export class StudentController {
   constructor(
@@ -22,7 +23,7 @@ export class StudentController {
     { name: 'anverso', maxCount: 1 },
     { name: 'reverso', maxCount: 1 },
   ]))
-  async uploadFilesID(
+  uploadFilesID(
     @Param('id') id: string,
     @UploadedFiles() files: { anverso?: Express.Multer.File[], reverso?: Express.Multer.File[] },
     @Req() req: CustomRequest) {
@@ -30,9 +31,36 @@ export class StudentController {
       anverso: files.anverso ? files.anverso[0].originalname.split('.').pop() : null,
       reverso: files.reverso ? files.reverso[0].originalname.split('.').pop() : null,
     };
-    return await this.dockService.uploadCarnet(req.user.email, files, fileExtensions);
+    return this.dockService.uploadCarnet(req.user.email, files, fileExtensions);
   }
 
+  @Roles('admin')
+  @Patch('verify')
+  @UseGuards(SessionAuthGuard, RolesGuard) 
+  verify(@Body() verifyStudentDto: { mail: string, verified: boolean }) {
+    return this.studentService.verify(verifyStudentDto.mail, verifyStudentDto.verified);
+  } 
+
+  @Roles('admin')
+  @Post('document')
+  @UseGuards(SessionAuthGuard, RolesGuard)
+  notifyDocument(@Body() notifyDocumentDto: { mail: string, message: string }) {
+    return this.studentService.notifyDocument(notifyDocumentDto.mail, notifyDocumentDto.message);
+  } 
+
+  @Post('upload/documents')
+  @UseGuards(SessionAuthGuard)
+  @UseInterceptors(AnyFilesInterceptor())
+  uploadDocuments(@UploadedFiles() files: Array<Express.Multer.File>,  @Req() req: CustomRequest){
+    return this.dockService.uploadDocument(req.user.email, files);
+  }
+
+  @Get('filenames')
+  @UseGuards(SessionAuthGuard)
+  getFileNames(@Req() req: CustomRequest){
+    return this.dockService.getFileNames(req.user.email);
+  } 
+  
 
   @Post()
   create(@Body() createStudentDto: CreateStudentDto) {

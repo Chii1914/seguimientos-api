@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable, BadRequestException } from '@nestjs/common';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,11 +12,16 @@ export class StudentService {
     @InjectRepository(Student) private studentRepository: Repository<Student>,
   ){}
 
+  async notifyDocument(mail: string, message: string) {
+    
+    return `Notificación enviada a ${mail} con el mensaje ${message}`;
+  }
+
   async create(createStudentDto: CreateStudentDto) {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@alumnos.uv.cl$/;
 
     if (!emailRegex.test(createStudentDto.mail)){
-      throw new Error('El correo debe terminar en @alumnos.uv.cl');
+      throw new BadRequestException('El correo debe terminar en @alumnos.uv.cl');
     }
     try {
       const student = await this.studentRepository.create(createStudentDto);
@@ -26,6 +31,23 @@ export class StudentService {
       console.error(error);
     }
   }
+
+  async verify(mail: string, verified: boolean) {
+    const student = await this.studentRepository.findOne({where:
+      {
+        mail: mail
+      }
+    });
+    if (!mail) throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    if (student){
+      student.verified = verified;
+      return await this.studentRepository.save(student);
+    }
+    else {
+      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    }
+  }
+
 
   async findAll() {
     return await this.studentRepository.find();
