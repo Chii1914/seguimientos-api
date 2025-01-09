@@ -1,6 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
+import { Not } from 'typeorm';
 @Injectable()
 export class DockService {
 
@@ -70,13 +71,41 @@ export class DockService {
             const documentPath = path.join(studentPath, 'documentos');
             const carnetPath = path.join(studentPath, 'carnet');
 
-            const documentFiles = fs.existsSync(documentPath) ? fs.readdirSync(documentPath) : [];
-            const carnetFiles = fs.existsSync(carnetPath) ? fs.readdirSync(carnetPath) : [];
+            const documentos = fs.existsSync(documentPath) ? fs.readdirSync(documentPath) : [];
+            const carnet = fs.existsSync(carnetPath) ? fs.readdirSync(carnetPath) : [];
 
-            return { documentFiles, carnetFiles };
+            return { documentos, carnet };
         } catch (e) {
             console.error(e);
             return { message: 'Error al obtener nombres de archivos' };
         }
     }
+
+    getFile(mail: string, filename: string, category: string) {
+        try {
+            const studentPath = path.join(this.uploadPath, mail);
+            if (!fs.existsSync(studentPath)) {
+                return { message: 'El estudiante no tiene directorio' };
+            }
+            const categoryPath = path.join(studentPath, category); // Path to the specific file
+            if (!categoryPath) {
+                return { message: 'El archivo no pertenece a la categoría' };
+            }
+            const filePath = path.join(categoryPath, filename);
+            if (!filePath) {
+                return { message: 'El archivo no existe' };
+            }
+            const file = fs.readFileSync(filePath);
+            return {
+                message: 'Archivo descargado correctamente',
+                file: file,
+                filename: filename,
+            }
+        }
+        catch (error) {
+            console.error(error);
+            return { message: 'Error al obtener nombres de archivos' };
+        }
+    }
+
 }

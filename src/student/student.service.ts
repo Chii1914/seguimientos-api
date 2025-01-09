@@ -1,20 +1,21 @@
-import { HttpException, HttpStatus, Inject, Injectable, BadRequestException } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable, BadRequestException, NotImplementedException } from '@nestjs/common';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Student } from './entities/student.entity';
 import { Repository } from 'typeorm';
-
+import { CreateStudentWithMotiveDto } from './dto/create-student-motive.dto';
+import { Motives } from 'src/motives/entities/motive.entity';
 @Injectable()
 export class StudentService {
 
   constructor(
     @InjectRepository(Student) private studentRepository: Repository<Student>,
+    @InjectRepository(Motives) private motiveRepository: Repository<Motives>
   ){}
 
   async notifyDocument(mail: string, message: string) {
-    
-    return `Notificación enviada a ${mail} con el mensaje ${message}`;
+    throw new NotImplementedException();
   }
 
   async create(createStudentDto: CreateStudentDto) {
@@ -48,6 +49,21 @@ export class StudentService {
     }
   }
 
+  async createStudentWithMotive(createStudentWithMotiveDto: CreateStudentWithMotiveDto) { 
+    try{
+      const student = await this.studentRepository.create(createStudentWithMotiveDto.student);
+      createStudentWithMotiveDto.motive.mail = student.mail;
+      const motive = await this.motiveRepository.create(createStudentWithMotiveDto.motive);
+
+      await this.studentRepository.save(student);
+      await this.motiveRepository.save(motive);
+      return {student, motive};
+    }catch(error){
+      console.error(error);
+    }
+  }
+
+
 
   async findAll() {
     return await this.studentRepository.find();
@@ -68,4 +84,6 @@ export class StudentService {
   async remove(mail: string) {
     return await this.studentRepository.delete({mail});
   }
+
+
 }

@@ -9,6 +9,8 @@ import { Roles } from 'src/common/roles/roles.decorator';
 import { RolesGuard } from 'src/common/roles/roles.guard';
 import { CustomRequest } from './types/request';
 import { validate } from 'class-validator';
+import { CreateMotiveDto } from 'src/motives/dto/create-motive.dto';
+import { CreateStudentWithMotiveDto } from './dto/create-student-motive.dto';
 @Controller('student')
 export class StudentController {
   constructor(
@@ -51,16 +53,35 @@ export class StudentController {
   @Post('upload/documents')
   @UseGuards(SessionAuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
-  uploadDocuments(@UploadedFiles() files: Array<Express.Multer.File>,  @Req() req: CustomRequest){
+  uploadDocuments(@UploadedFiles() files: Array<Express.Multer.File>, @Req() req: CustomRequest, @Body() custom: {email: string}){
+    if(custom.email){
+      //Caso en el que admin que sube docs desde el dashboard
+      return this.dockService.uploadDocument(custom.email, files);
+    }
+    //Caso en el que el alumno es el que sube los documentos desde su vista
     return this.dockService.uploadDocument(req.user.email, files);
   }
 
-  @Get('filenames')
+  @Get('filenames/:mail')
   @UseGuards(SessionAuthGuard)
-  getFileNames(@Req() req: CustomRequest){
-    return this.dockService.getFileNames(req.user.email);
+  getFileNames(@Param('mail') mail: string){
+    return this.dockService.getFileNames(mail);
   } 
   
+  @Roles('admin')
+  @Get('download/:mail/:filename/:cat')
+  @UseGuards(SessionAuthGuard, RolesGuard)
+  getFile(@Param('mail') mail: string, @Param('filename') filename: string, @Param('cat') cat: string){
+    return this.dockService.getFile(mail, filename, cat);
+  }
+
+  @Roles('admin')
+  @Post('initialform')
+  @UseGuards(SessionAuthGuard, RolesGuard)
+  newStudentForm(@Body() newStudentFormDto: CreateStudentWithMotiveDto) {
+    return this.studentService.createStudentWithMotive(newStudentFormDto);
+  }
+ 
 
   @Post()
   create(@Body() createStudentDto: CreateStudentDto) {
