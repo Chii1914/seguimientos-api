@@ -9,6 +9,8 @@ import { Roles } from 'src/common/roles/roles.decorator';
 import { RolesGuard } from 'src/common/roles/roles.guard';
 import { CustomRequest } from './types/request';
 import { validate } from 'class-validator';
+import { CreateMotiveDto } from 'src/motives/dto/create-motive.dto';
+import { CreateStudentWithMotiveDto } from './dto/create-student-motive.dto';
 @Controller('student')
 export class StudentController {
   constructor(
@@ -72,6 +74,14 @@ export class StudentController {
   getFile(@Param('mail') mail: string, @Param('filename') filename: string, @Param('cat') cat: string){
     return this.dockService.getFile(mail, filename, cat);
   }
+
+  @Roles('admin')
+  @Post('initialform')
+  @UseGuards(SessionAuthGuard, RolesGuard)
+  newStudentForm(@Body() newStudentFormDto: CreateStudentWithMotiveDto) {
+    return this.studentService.createStudentWithMotive(newStudentFormDto);
+  }
+ 
 
   @Post()
   create(@Body() createStudentDto: CreateStudentDto) {
