@@ -83,6 +83,11 @@ export class StudentController {
   }
  
 
+  @Get('aadsopksdakopadspokd')
+  example(){
+    return this.studentService.ejemplo();
+  }
+
   @Post()
   create(@Body() createStudentDto: CreateStudentDto) {
     return this.studentService.create(createStudentDto);
