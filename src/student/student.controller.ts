@@ -60,12 +60,18 @@ export class StudentController {
     return this.dockService.uploadDocument(req.user.email, files);
   }
 
-  @Get('filenames')
+  @Get('filenames/:mail')
   @UseGuards(SessionAuthGuard)
-  getFileNames(@Body() custom: {email: string}){
-    return this.dockService.getFileNames(custom.email);
+  getFileNames(@Param('mail') mail: string){
+    return this.dockService.getFileNames(mail);
   } 
   
+  @Roles('admin')
+  @Get('download/:mail/:filename/:cat')
+  @UseGuards(SessionAuthGuard, RolesGuard)
+  getFile(@Param('mail') mail: string, @Param('filename') filename: string, @Param('cat') cat: string){
+    return this.dockService.getFile(mail, filename, cat);
+  }
 
   @Post()
   create(@Body() createStudentDto: CreateStudentDto) {
