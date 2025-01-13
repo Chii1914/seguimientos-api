@@ -70,6 +70,12 @@ export class Motives {
   @Column("text", { name: "justEconomicoAcademico", nullable: true })
   justEconomicoAcademico: string | null;
 
+  @Column("tinyint", { name: "economico", nullable: true, width: 1 })
+  economico: boolean | null;
+
+  @Column("text", { name: "justEconomico", nullable: true })
+  justEconomico: string | null;
+
   @OneToOne(() => Student, (student) => student.motives, {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",

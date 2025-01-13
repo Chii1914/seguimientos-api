@@ -85,4 +85,12 @@ export class CreateMotiveDto {
     @IsOptional()
     @IsString()
     justEconomicoAcademico?: string;
+
+    @IsOptional()
+    @IsBoolean()
+    economico
+
+    @IsOptional()
+    @IsString()
+    justEconomico?: string
 }
