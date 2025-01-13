@@ -63,14 +63,6 @@ export class StudentService {
     }
   }
 
- async ejemplo(){
-  return await this.studentRepository
-  .createQueryBuilder("student")
-  .innerJoinAndSelect("student.motives", "motives")
-  .getMany();
-  
-}
-
   async findAll() {
     return await this.studentRepository.find();
   }
