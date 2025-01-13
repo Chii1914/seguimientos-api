@@ -83,7 +83,7 @@ export class StudentController {
   }
  
 
-  @Get('StudentwMotives')
+  @Get('aadsopksdakopadspokd')
   example(){
     return this.studentService.ejemplo();
   }
