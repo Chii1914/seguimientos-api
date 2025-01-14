@@ -87,6 +87,8 @@ export class StudentController {
     return this.studentService.create(createStudentDto);
   }
 
+  @Roles('admin')
+  @UseGuards(SessionAuthGuard, RolesGuard)
   @Get()
   findAll() {
     return this.studentService.findAll();
@@ -102,6 +104,8 @@ export class StudentController {
     return this.studentService.update(mail, updateStudentDto);
   }
 
+  @Roles('admin')
+  @UseGuards(SessionAuthGuard, RolesGuard)
   @Delete(':mail')
   remove(@Param('mail') mail: string) {
     return this.studentService.remove(mail);
