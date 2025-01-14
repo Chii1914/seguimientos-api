@@ -129,12 +129,14 @@ export class DockService {
             dia: data['dia'],
             mes: data['mes'],
             anio: data['anio'],
-            primer_nombre: data['primer_nombre'],
-            segundo_nombre: data['segundo_nombre'],
-            apellido_paterno: data['apellido_paterno'],
-            apellido_materno: data['apellido_materno'],
-            run: data['rut'],
-            ultimo_sem_aprobado: data['ultimo_sem_aprobado'],
+            name: data['name'],
+            secondName: data['secondName'],
+            fatherLastName: data['fatherLastName'],
+            motherLastName: data['motherLastName'],
+            rut: data['rut'],
+            semester: data['semester'],
+            accionTomada: data['accionTomada'],
+            JustificacionaccTomada: data['JustificacionAccTomada']
             
         });
         const buf = doc.getZip().generate({
