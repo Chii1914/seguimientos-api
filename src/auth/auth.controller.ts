@@ -42,11 +42,11 @@ export class AuthController {
       if (!res.headersSent) {
         //Lado de estudiante
         if(req.user.rol == 'student'){
-          return res.redirect(`${process.env.FRONTEND_URL_STUDENT}/student?xvlf=${randomString}`);
+          return res.redirect(`${process.env.FRONTEND_URL_STUDENT}?xvlf=${randomString}`);
         }
         //Lado de administrador
         else if (req.user.rol == 'admin'){
-          return res.redirect(`${process.env.FRONTEND_URL}/success?xvlf=${randomString}`);
+          return res.redirect(`${process.env.FRONTEND_URL}?xvlf=${randomString}`);
         }
       }
     } catch (err) {

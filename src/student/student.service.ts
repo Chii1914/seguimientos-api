@@ -65,8 +65,6 @@ export class StudentService {
     }
   }
 
-
-
   async findAll() {
     return await this.studentRepository.find();
   }

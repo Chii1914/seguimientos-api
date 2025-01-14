@@ -95,6 +95,8 @@ s
     return this.studentService.create(createStudentDto);
   }
 
+  @Roles('admin')
+  @UseGuards(SessionAuthGuard, RolesGuard)
   @Get()
   findAll() {
     return this.studentService.findAll();
@@ -110,6 +112,8 @@ s
     return this.studentService.update(mail, updateStudentDto);
   }
 
+  @Roles('admin')
+  @UseGuards(SessionAuthGuard, RolesGuard)
   @Delete(':mail')
   remove(@Param('mail') mail: string) {
     return this.studentService.remove(mail);
