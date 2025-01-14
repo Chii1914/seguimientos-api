@@ -6,12 +6,14 @@ import { Student } from './entities/student.entity';
 import { Repository } from 'typeorm';
 import { CreateStudentWithMotiveDto } from './dto/create-student-motive.dto';
 import { Motives } from 'src/motives/entities/motive.entity';
+import { DockService } from 'src/dock/dock.service';
 @Injectable()
 export class StudentService {
 
   constructor(
     @InjectRepository(Student) private studentRepository: Repository<Student>,
-    @InjectRepository(Motives) private motiveRepository: Repository<Motives>
+    @InjectRepository(Motives) private motiveRepository: Repository<Motives>,
+    private readonly dockService: DockService
   ){}
 
   async notifyDocument(mail: string, message: string) {
@@ -85,5 +87,13 @@ export class StudentService {
     return await this.studentRepository.delete({mail});
   }
 
-
+  async generateDock(){
+    const mail ='nataniel.palacios@alumnos.uv.cl'
+    const student = await this.studentRepository.findOne({where:
+      {
+        mail: mail
+      }
+    });
+    this.dockService.crear_cg(student);
+  }
 }

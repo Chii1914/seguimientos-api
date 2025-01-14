@@ -2,6 +2,10 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Not } from 'typeorm';
+import PizZip from 'pizzip';
+import Docxtemplater from 'docxtemplater';
+
+
 @Injectable()
 export class DockService {
 
@@ -108,4 +112,42 @@ export class DockService {
         }
     }
 
+    crear_cg(data: Object) {
+        try{
+        fs.mkdir(path.join(__dirname, "..", "..", "public", "documentos", data['run'].toString()), { recursive: true }, (err) => { console.log(err) });
+        const pathTemplate = path.join(__dirname, "..", "..", "public", "plantillas", "carta_generica_plantilla.docx");
+        const outputPath = path.join(__dirname, "..", "..", "public", "documentos", data['run'].toString());
+        const content = fs.readFileSync(path.resolve(pathTemplate), 'binary'); //De donde se lee la template 
+        const zip = new PizZip(content);
+        const doc = new Docxtemplater(zip, {
+            paragraphLoop: true,
+            linebreaks: true,
+        });
+
+        doc.render({
+            sede: data['sede'],
+            dia: data['dia'],
+            mes: data['mes'],
+            anio: data['anio'],
+            primer_nombre: data['primer_nombre'],
+            segundo_nombre: data['segundo_nombre'],
+            apellido_paterno: data['apellido_paterno'],
+            apellido_materno: data['apellido_materno'],
+            run: data['rut'],
+            ultimo_sem_aprobado: data['ultimo_sem_aprobado'],
+            
+        });
+        const buf = doc.getZip().generate({
+            type: "nodebuffer",
+            compression: "DEFLATE",
+        });
+        fs.writeFileSync(path.resolve(path.resolve(outputPath), data['nombre_archivo']), buf);
+    }catch(e){return}
+        return(true)
+    }
+
+    
+
+
+    
 }
