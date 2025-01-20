@@ -82,13 +82,14 @@ export class StudentController {
     return this.studentService.createStudentWithMotive(newStudentFormDto);
   }
  
-  @Roles('admin')
-  @Get('generate')
-  @UseGuards(SessionAuthGuard, RolesGuard)
-  generateDock(){
-    return this.studentService.generateDock()
+  //@Roles('admin')
+  @Post('generate')
+  //@UseGuards(SessionAuthGuard, RolesGuard)
+  generateDock(@Body() datos: any){
+    return this.studentService.generateDock(datos)
   }
-s
+
+
 
   @Post()
   create(@Body() createStudentDto: CreateStudentDto) {

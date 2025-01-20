@@ -85,13 +85,13 @@ export class StudentService {
     return await this.studentRepository.delete({mail});
   }
 
-  async generateDock(){
-    const mail ='nataniel.palacios@alumnos.uv.cl'
+  async generateDock(datos:any ){
+    const mail ='maximiliano.aguirre@alumnos.uv.cl'
     const student = await this.studentRepository.findOne({where:
       {
         mail: mail
       }
     });
-    this.dockService.crear_cg(student);
+    return await this.dockService.crear_cg(student);
   }
 }

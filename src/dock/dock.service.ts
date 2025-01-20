@@ -4,6 +4,7 @@ import * as path from 'path';
 import { Not } from 'typeorm';
 import PizZip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
+import { error, log } from 'console';
 
 
 @Injectable()
@@ -113,10 +114,11 @@ export class DockService {
     }
 
     crear_cg(data: Object) {
+        console.log(data)
         try{
-        fs.mkdir(path.join(__dirname, "..", "..", "public", "documentos", data['run'].toString()), { recursive: true }, (err) => { console.log(err) });
-        const pathTemplate = path.join(__dirname, "..", "..", "public", "plantillas", "carta_generica_plantilla.docx");
-        const outputPath = path.join(__dirname, "..", "..", "public", "documentos", data['run'].toString());
+        fs.mkdir(path.join(__dirname, "..", "public", "documentos", data['rut'].toString()), { recursive: true }, (err) => { console.log(err) });
+        const pathTemplate = path.join(__dirname, "..", "public", "plantillas", "carta_generica_plantilla.docx");
+        const outputPath = path.join(__dirname, "..", "..", "public", "documentos", data['rut'].toString());
         const content = fs.readFileSync(path.resolve(pathTemplate), 'binary'); //De donde se lee la template 
         const zip = new PizZip(content);
         const doc = new Docxtemplater(zip, {
@@ -143,9 +145,11 @@ export class DockService {
             type: "nodebuffer",
             compression: "DEFLATE",
         });
-        fs.writeFileSync(path.resolve(path.resolve(outputPath), data['nombre_archivo']), buf);
-    }catch(e){return}
-        return(true)
+        fs.writeFileSync(path.resolve(path.resolve(outputPath), data['sede']), buf);
+    }catch(e){
+        console.error(e)
+        return false
+                }            return(true)
     }
 
     
