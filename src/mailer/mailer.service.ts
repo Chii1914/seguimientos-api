@@ -19,7 +19,7 @@ export class MailerService {
 
     async sendMail(to: string, subject: string, text: string, html?: string) {
         const mailOptions = {
-            from: 'Maxi <maximiliano.aguirre@alumnos.uv.cl>',
+            from: this.configService.get<string>('MAIL_NICKNAME'),
             to,
             subject,
             text,
