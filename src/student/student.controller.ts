@@ -94,6 +94,21 @@ export class StudentController {
     return this.studentService.findAll();
   }
 
+  @Roles('admin')
+  @UseGuards(SessionAuthGuard, RolesGuard)
+  @Get('motives')
+  findWithMotives() {
+    return this.studentService.findStudentsWithMotive();
+  }
+
+  @Roles('admin')
+  @UseGuards(SessionAuthGuard, RolesGuard)
+  @Patch('motives/:mail')
+  updateWithMotives(@Param('mail') mail: string) {
+    return this.studentService.updateWithMotives();
+  }
+
+
   @Get(':mail')
   findOne(@Param('mail') mail: string) {
     return this.studentService.findOne(mail);

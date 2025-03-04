@@ -160,6 +160,31 @@ export class StudentService {
     return await this.studentRepository.find();
   }
 
+  async findStudentsWithMotive() {
+    const students = await this.studentRepository
+      .createQueryBuilder('student')
+      .leftJoinAndSelect('student.motives', 'motives')
+      .getMany();
+
+    return students.map(student => {
+      const transformedStudent = {
+        ...student,
+        ...student.motives,
+        motives: undefined
+      };
+
+      Object.keys(transformedStudent).forEach(key => {
+        if (transformedStudent[key] === 0) {
+          transformedStudent[key] = false;
+        } else if (transformedStudent[key] === 1) {
+          transformedStudent[key] = true;
+        }
+      });
+
+      return transformedStudent;
+    });
+  }
+  
   async findOne(email: string) {
     return await this.studentRepository.findOne({
       where:
@@ -177,5 +202,9 @@ export class StudentService {
     return await this.studentRepository.delete({ mail });
   }
 
+  async updateWithMotives() {
+    throw new NotImplementedException('Not');
+  }
+  
 
 }
