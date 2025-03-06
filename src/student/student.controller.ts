@@ -104,8 +104,8 @@ export class StudentController {
   @Roles('admin')
   @UseGuards(SessionAuthGuard, RolesGuard)
   @Patch('motives/:mail')
-  updateWithMotives(@Param('mail') mail: string) {
-    return this.studentService.updateWithMotives();
+  updateWithMotives(@Param('mail') mail: string, @Body() data:any) {
+    return this.studentService.updateWithMotives(data);
   }
 
 

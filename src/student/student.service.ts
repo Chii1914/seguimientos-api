@@ -8,6 +8,10 @@ import { CreateStudentWithMotiveDto } from './dto/create-student-motive.dto';
 import { Motives } from 'src/motives/entities/motive.entity';
 import { MailerService } from 'src/mailer/mailer.service';
 import solicitude from './types/mailDocuments';
+import { plainToInstance } from 'class-transformer';
+import { error } from 'console';
+import { validate } from 'class-validator';
+import { parse } from 'path';
 @Injectable()
 export class StudentService {
 
@@ -17,7 +21,7 @@ export class StudentService {
     private readonly mailerService: MailerService
   ) { }
 
-  async notifyDocument(author: string,mail: string, message: string) {
+  async notifyDocument(author: string, mail: string, message: string) {
     try {
       const student = await this.studentRepository.findOneOrFail({ where: { mail } });
       const name = student.name.split(' ')[0] + ' ' + student.fatherLastName.split(' ')[0];
@@ -184,7 +188,7 @@ export class StudentService {
       return transformedStudent;
     });
   }
-  
+
   async findOne(email: string) {
     return await this.studentRepository.findOne({
       where:
@@ -202,9 +206,107 @@ export class StudentService {
     return await this.studentRepository.delete({ mail });
   }
 
-  async updateWithMotives() {
-    throw new NotImplementedException('Not');
+  async updateWithMotives(data: any) {
+    const {
+      mail,
+      gtoken,
+      sessionString,
+      rut,
+      df,
+      semester,
+      name,
+      phone,
+      secondName,
+      fatherLastName,
+      motherLastName,
+      sede,
+      verified,
+      remedialAction,
+      consumoSustancias,
+      justConsumoSustancias,
+      convivencia,
+      justConvivencia,
+      emocionalYAcademico,
+      justEmocionalYAcademico,
+      emocional,
+      justEmocional,
+      academico,
+      justAcademico,
+      uvInclusiva,
+      justUvInclusiva,
+      abuso,
+      justAbuso,
+      economicoEmocionalAcademico,
+      justEconomicoEmocionalAcademico,
+      economicoEmocional,
+      justEconomicoEmocional,
+      economicoAcademico,
+      justEconomicoAcademico,
+      economico,
+      justEconomico
+    } = data;
+
+    const studentData = {
+      mail,
+      gtoken,
+      sessionString,
+      rut: parseInt(rut),
+      df,
+      semester,
+      name,
+      phone: parseInt(phone),
+      secondName,
+      fatherLastName,
+      motherLastName,
+      sede,
+      verified,
+      remedialAction
+    };
+
+    const motivesData = {
+      mail,
+      consumoSustancias,
+      justConsumoSustancias,
+      convivencia,
+      justConvivencia,
+      emocionalYAcademico,
+      justEmocionalYAcademico,
+      emocional,
+      justEmocional,
+      academico,
+      justAcademico,
+      uvInclusiva,
+      justUvInclusiva,
+      abuso,
+      justAbuso,
+      economicoEmocionalAcademico,
+      justEconomicoEmocionalAcademico,
+      economicoEmocional,
+      justEconomicoEmocional,
+      economicoAcademico,
+      justEconomicoAcademico,
+      economico,
+      justEconomico
+    };
+    const studentDto = plainToInstance(CreateStudentDto, studentData);
+    const motivesDto = plainToInstance(CreateStudentWithMotiveDto, motivesData);
+    const errors1 = await validate(studentDto);
+    const errors = await validate(motivesDto);
+    if (errors.length > 0) {
+      throw new BadRequestException(errors);
+    }
+    if (errors1.length > 0) {
+      throw new BadRequestException(errors1);
+    }
+    try{
+      await this.studentRepository.update(mail, studentData);
+      await this.motiveRepository.update(mail, motivesData);
+      return { message: 'Estudiante actualizado' };
+    }catch (error){
+      console.error(error);
+    }
+
   }
-  
+
 
 }
