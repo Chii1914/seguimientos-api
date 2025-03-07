@@ -206,6 +206,10 @@ export class StudentService {
     return await this.studentRepository.delete({ mail });
   }
 
+  async removeFile(mail: string) {
+    return await this.studentRepository.delete({ mail });
+  }
+
   async updateWithMotives(data: any) {
     const {
       mail,

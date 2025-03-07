@@ -125,4 +125,11 @@ export class StudentController {
   remove(@Param('mail') mail: string) {
     return this.studentService.remove(mail);
   }
+
+  @Roles('admin')
+  @UseGuards(SessionAuthGuard, RolesGuard)
+  @Delete('delete/:mail/:filename/:cat')
+  removeFile(@Param('mail') mail: string, @Param('filename') filename: string, @Param('cat') cat: string){
+    return this.dockService.deleteFile(mail, filename, cat);
+  }
 }

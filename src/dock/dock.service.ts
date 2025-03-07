@@ -1,7 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Not } from 'typeorm';
 @Injectable()
 export class DockService {
 
@@ -108,4 +107,26 @@ export class DockService {
         }
     }
 
+    deleteFile(mail: string, filename: string, category: string) {
+        try {
+            const studentPath = path.join(this.uploadPath, mail);
+            if (!fs.existsSync(studentPath)) {
+                return { message: 'El estudiante no tiene directorio' };
+            }
+            const categoryPath = path.join(studentPath, category);
+            if (!categoryPath) {
+                return { message: 'El archivo no pertenece a la categoría' };
+            }
+            const filePath = path.join(categoryPath, filename);
+            if (!filePath) {
+                return { message: 'El archivo no existe' };
+            }
+            fs.unlinkSync(filePath);
+            return { message: 'Archivo eliminado correctamente' };
+
+        } catch (error) {
+            console.error(error);
+            return { message: 'Error al eliminar archivo' };
+        }
+    }
 }
