@@ -30,6 +30,16 @@ export class FollowUpService {
 
   }
 
+    async getMailCounts(): Promise<{ mail: string; seguimientos: number }[]> {
+    return this.followUpRepository
+      .createQueryBuilder('followup')
+      .select('followup.mail', 'mail')
+      .addSelect('COUNT(*)', 'seguimientos')
+      .groupBy('followup.mail')
+      .orderBy('seguimientos', 'DESC')
+      .getRawMany();
+  }
+
   findAll() {
     return `This action returns all followUp`;
   }

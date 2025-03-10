@@ -40,4 +40,12 @@ export class FollowUpController {
   remove(@Param('id') id: string) {
     return this.followUpService.remove(+id);
   }
+
+  //@Roles('admin')
+  //@UseGuards(SessionAuthGuard, RolesGuard)
+  @Get('export/:mail')
+  getMailCounts(@Param('mail') mail: string) {
+    const count = this.followUpService.getMailCounts();
+    
+  }
 }
