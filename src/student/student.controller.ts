@@ -45,9 +45,9 @@ export class StudentController {
 
   @Roles('admin')
   @Post('document')
-  //@UseGuards(SessionAuthGuard, RolesGuard)
+  @UseGuards(SessionAuthGuard, RolesGuard)
   notifyDocument(@Body() notifyDocumentDto: { mail: string, message: string }, @Req() req: CustomRequest) {
-    return this.studentService.notifyDocument("req.user.email", notifyDocumentDto.mail, notifyDocumentDto.message);
+    return this.studentService.notifyDocument(req.user.email, notifyDocumentDto.mail, notifyDocumentDto.message);
   } 
 
   @Post('upload/documents')
