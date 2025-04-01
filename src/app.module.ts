@@ -8,6 +8,7 @@ import { StudentStateModule } from './student-state/student-state.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { DockModule } from './dock/dock.module';
+import { AuthOutlookModule } from './auth-outlook/auth-outlook.module';
 
 
 @Module({
@@ -35,7 +36,8 @@ import { DockModule } from './dock/dock.module';
   StudentStateModule,
   UserModule,
   AuthModule,
-  DockModule
+  DockModule,
+  AuthOutlookModule
 ],
   controllers: [],
   providers: [],
