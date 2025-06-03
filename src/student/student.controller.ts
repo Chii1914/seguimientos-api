@@ -1,16 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFiles, UseGuards, Req, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Res, Body, Patch, Param, Delete, UseInterceptors, UploadedFiles, UseGuards, Req, BadRequestException } from '@nestjs/common';
+import { Response } from 'express';
 import { StudentService } from './student.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { AnyFilesInterceptor, FileFieldsInterceptor } from '@nestjs/platform-express';
 import { DockService } from 'src/dock/dock.service';
-import { SessionAuthGuard } from 'src/guards/session-auth.guard';
-import { Roles } from 'src/common/roles/roles.decorator';
-import { RolesGuard } from 'src/common/roles/roles.guard';
 import { CustomRequest } from './types/request';
-import { validate } from 'class-validator';
-import { CreateMotiveDto } from 'src/motives/dto/create-motive.dto';
 import { CreateStudentWithMotiveDto } from './dto/create-student-motive.dto';
+import { UserTypeGuard } from 'src/guards/user-type.guard';
+import { AuthGuard } from '@nestjs/passport';
+
 @Controller('student')
 export class StudentController {
   constructor(
@@ -18,9 +17,8 @@ export class StudentController {
     private readonly dockService: DockService) { }
 
 
-  @Roles('student')
   @Post('identificacion')
-  @UseGuards(SessionAuthGuard, RolesGuard)
+  @UseGuards(AuthGuard('jwt'), UserTypeGuard('student'))
   @UseInterceptors(FileFieldsInterceptor([
     { name: 'anverso', maxCount: 1 },
     { name: 'reverso', maxCount: 1 },
@@ -36,25 +34,23 @@ export class StudentController {
     return this.dockService.uploadCarnet(req.user.email, files, fileExtensions);
   }
 
-  @Roles('admin')
   @Patch('verify')
-  @UseGuards(SessionAuthGuard, RolesGuard) 
+  @UseGuards(AuthGuard('jwt'), UserTypeGuard('admin'))
   verify(@Body() verifyStudentDto: { mail: string, verified: boolean }) {
     return this.studentService.verify(verifyStudentDto.mail, verifyStudentDto.verified);
-  } 
+  }
 
-  @Roles('admin')
+  @UseGuards(AuthGuard('jwt'), UserTypeGuard('admin'))
   @Post('document')
-  @UseGuards(SessionAuthGuard, RolesGuard)
   notifyDocument(@Body() notifyDocumentDto: { mail: string, message: string }, @Req() req: CustomRequest) {
     return this.studentService.notifyDocument(req.user.email, notifyDocumentDto.mail, notifyDocumentDto.message);
-  } 
+  }
 
   @Post('upload/documents')
-  @UseGuards(SessionAuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(AnyFilesInterceptor())
-  uploadDocuments(@UploadedFiles() files: Array<Express.Multer.File>, @Req() req: CustomRequest, @Body() custom: {email: string}){
-    if(custom.email){
+  uploadDocuments(@UploadedFiles() files: Array<Express.Multer.File>, @Req() req: CustomRequest, @Body() custom: { email: string }) {
+    if (custom.email) {
       //Caso en el que admin que sube docs desde el dashboard
       return this.dockService.uploadDocument(custom.email, files);
     }
@@ -63,48 +59,43 @@ export class StudentController {
   }
 
   @Get('filenames/:mail')
-  @UseGuards(SessionAuthGuard)
-  getFileNames(@Param('mail') mail: string){
+  @UseGuards(AuthGuard('jwt'))
+  getFileNames(@Param('mail') mail: string) {
     return this.dockService.getFileNames(mail);
-  } 
-  
-  @Roles('admin')
+  }
+
   @Get('download/:mail/:filename/:cat')
-  @UseGuards(SessionAuthGuard, RolesGuard)
-  getFile(@Param('mail') mail: string, @Param('filename') filename: string, @Param('cat') cat: string){
+  @UseGuards(AuthGuard('jwt'), UserTypeGuard('admin'))
+  getFile(@Param('mail') mail: string, @Param('filename') filename: string, @Param('cat') cat: string) {
     return this.dockService.getFile(mail, filename, cat);
   }
 
-  @Roles('admin')
   @Post('initialform')
-  @UseGuards(SessionAuthGuard, RolesGuard)
+  @UseGuards(AuthGuard('jwt'), UserTypeGuard('admin'))
   newStudentForm(@Body() newStudentFormDto: CreateStudentWithMotiveDto) {
     return this.studentService.createStudentWithMotive(newStudentFormDto);
   }
- 
+
   @Post()
   create(@Body() createStudentDto: CreateStudentDto) {
     return this.studentService.create(createStudentDto);
   }
 
-  @Roles('admin')
-  @UseGuards(SessionAuthGuard, RolesGuard)
+  @UseGuards(AuthGuard('jwt'), UserTypeGuard('admin'))
   @Get()
   findAll() {
     return this.studentService.findAll();
   }
 
-  @Roles('admin')
-  @UseGuards(SessionAuthGuard, RolesGuard)
+  @UseGuards(AuthGuard('jwt'), UserTypeGuard('admin'))
   @Get('motives')
   findWithMotives() {
     return this.studentService.findStudentsWithMotive();
   }
 
-  @Roles('admin')
-  @UseGuards(SessionAuthGuard, RolesGuard)
+  @UseGuards(AuthGuard('jwt'), UserTypeGuard('admin'))
   @Patch('motives/:mail')
-  updateWithMotives(@Param('mail') mail: string, @Body() data:any) {
+  updateWithMotives(@Param('mail') mail: string, @Body() data: any) {
     return this.studentService.updateWithMotives(data);
   }
 
@@ -119,17 +110,29 @@ export class StudentController {
     return this.studentService.update(mail, updateStudentDto);
   }
 
-  @Roles('admin')
-  @UseGuards(SessionAuthGuard, RolesGuard)
+  @UseGuards(AuthGuard('jwt'), UserTypeGuard('admin'))
   @Delete(':mail')
   remove(@Param('mail') mail: string) {
     return this.studentService.remove(mail);
   }
 
-  @Roles('admin')
-  @UseGuards(SessionAuthGuard, RolesGuard)
+  @UseGuards(AuthGuard('jwt'), UserTypeGuard('admin'))
   @Delete('delete/:mail/:filename/:cat')
-  removeFile(@Param('mail') mail: string, @Param('filename') filename: string, @Param('cat') cat: string){
+  removeFile(@Param('mail') mail: string, @Param('filename') filename: string, @Param('cat') cat: string) {
     return this.dockService.deleteFile(mail, filename, cat);
+  }
+
+  //@UseGuards(AuthGuard('jwt'), UserTypeGuard('admin'))
+
+  @Get('export-word/:mail')
+  async exportOneWord(@Param('mail') mail: string, @Res({ passthrough: false }) res: Response) {
+    const buffer = await this.dockService.exportOneWord(mail);
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+    res.setHeader('Content-Disposition', `attachment; filename=seguimientos_${mail}.docx`);
+    res.setHeader('Content-Length', buffer.length);
+
+    res.end(buffer);
+
   }
 }

@@ -4,7 +4,6 @@ import { StudentController } from './student.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Student } from './entities/student.entity';
 import { JwtModule } from '@nestjs/jwt';
-import { MailerService } from 'src/mailer/mailer.service';
 import { MailerModule } from 'src/mailer/mailer.module';
 
 @Global()
@@ -12,9 +11,9 @@ import { MailerModule } from 'src/mailer/mailer.module';
   imports: [TypeOrmModule.forFeature([Student]), JwtModule.register({
     secret: process.env.JWT_SECRET_KEY,
     signOptions: { expiresIn: '300m' },
-  }),MailerModule],
+  }), MailerModule],
   controllers: [StudentController],
   providers: [StudentService],
-  exports: [TypeOrmModule.forFeature([Student])],
+  exports: [TypeOrmModule.forFeature([Student]), StudentService]
 })
 export class StudentModule { }

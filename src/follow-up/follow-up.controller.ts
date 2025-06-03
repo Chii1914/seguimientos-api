@@ -5,16 +5,17 @@ import { UpdateFollowUpDto } from './dto/update-follow-up.dto';
 import { Roles } from 'src/common/roles/roles.decorator';
 import { SessionAuthGuard } from 'src/guards/session-auth.guard';
 import { RolesGuard } from 'src/common/roles/roles.guard';
+import { UserTypeGuard } from 'src/guards/user-type.guard';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('follow-up')
 export class FollowUpController {
   constructor(private readonly followUpService: FollowUpService) {}
 
-  @Roles('admin')
-  @UseGuards(SessionAuthGuard, RolesGuard)
+  @UseGuards(AuthGuard('jwt'), UserTypeGuard('admin'))
   @Post(':mail')
   create(@Param('mail') mail: string, @Body() followUpData:any) {
-    const followUp = followUpData.followUpData;
+    const followUp = followUpData.follow_up;
     followUp.mail = mail;
     return this.followUpService.create(followUp);
   }
@@ -24,8 +25,7 @@ export class FollowUpController {
     return this.followUpService.findAll();
   }
 
-  @Roles('admin')
-  @UseGuards(SessionAuthGuard, RolesGuard)
+  @UseGuards(AuthGuard('jwt'), UserTypeGuard('admin'))
   @Get(':mail')
   findOne(@Param('mail') mail: string) {
     return this.followUpService.findOne(mail);

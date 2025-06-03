@@ -6,7 +6,7 @@ import * as cors from 'cors'; // Importa el paquete 'cors'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(cors({
-    origin: ['http://localhost:3001', 'http://localhost:4200', 'https://seg.administracionpublica-uv.cl'],
+    origin: ['http://localhost:3000', 'http://localhost:4200', 'https://seg.administracionpublica-uv.cl'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type, Accept, Authorization', // Include Authorization
     credentials: true,

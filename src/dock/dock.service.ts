@@ -1,8 +1,17 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import * as fs from 'fs';
 import * as path from 'path';
+import { Student } from 'src/student/entities/student.entity';
+import { Repository } from 'typeorm';
+import * as PizzZip from 'pizzip';
+import * as Docxtemplater from 'docxtemplater';
 @Injectable()
 export class DockService {
+
+    constructor(
+        @InjectRepository(Student) private studentRepository: Repository<Student>,
+    ) { }
 
     private readonly uploadPath = path.join(__dirname, '..', 'uploads');
 
@@ -128,5 +137,39 @@ export class DockService {
             console.error(error);
             return { message: 'Error al eliminar archivo' };
         }
+    }
+
+    async exportOneWord(mail: string) {
+        const student = await this.studentRepository.findOne({ where: { mail: mail } });
+        if (!student) {
+            throw new NotFoundException('Estudiante no encontrado');
+        }
+        // Obtener todos los seguimientos del estudiante
+        const followUps = await this.studentRepository.findOne({
+            where: { mail: mail },
+            relations: ['followUps'],
+        });
+        if (!followUps) {
+            throw new NotFoundException('Seguimientos no encontrados para el estudiante');
+        }
+
+        const dataFollowUps = followUps.followUps.map((item, i) => ({ ...item, index: i + 1 }));
+
+        const templatePath = path.resolve(__dirname, './templates/followUps.docx');
+        const content = fs.readFileSync(templatePath, 'binary');
+        const zip = new PizzZip(content);
+        const doc = new Docxtemplater(zip, {
+            paragraphLoop: true,
+            linebreaks: true,
+        });
+        try {
+            doc.render({ followUps: dataFollowUps });
+            
+        } catch (error) {
+            console.error('Template rendering failed:', error);
+            throw new Error('Template processing error');
+        }
+        return doc.getZip().generate({ type: 'nodebuffer' });
+
     }
 }

@@ -7,11 +7,9 @@ import { Repository } from 'typeorm';
 import { CreateStudentWithMotiveDto } from './dto/create-student-motive.dto';
 import { Motives } from 'src/motives/entities/motive.entity';
 import { MailerService } from 'src/mailer/mailer.service';
-import solicitude from './types/mailDocuments';
 import { plainToInstance } from 'class-transformer';
-import { error } from 'console';
 import { validate } from 'class-validator';
-import { parse } from 'path';
+
 @Injectable()
 export class StudentService {
 
@@ -104,7 +102,7 @@ export class StudentService {
 
 </body>
 </html>
-;`);
+`);
       return { message: 'Correo enviado' };
     } catch
     (error) {
@@ -302,11 +300,11 @@ export class StudentService {
     if (errors1.length > 0) {
       throw new BadRequestException(errors1);
     }
-    try{
+    try {
       await this.studentRepository.update(mail, studentData);
       await this.motiveRepository.update(mail, motivesData);
       return { message: 'Estudiante actualizado' };
-    }catch (error){
+    } catch (error) {
       console.error(error);
     }
 

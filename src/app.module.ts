@@ -6,9 +6,8 @@ import { FollowUpModule } from './follow-up/follow-up.module';
 import { MotivesModule } from './motives/motives.module';
 import { StudentStateModule } from './student-state/student-state.module';
 import { UserModule } from './user/user.module';
-import { AuthModule } from './auth/auth.module';
 import { DockModule } from './dock/dock.module';
-import { AuthOutlookModule } from './auth-outlook/auth-outlook.module';
+import { Auth0Module } from './auth0/auth0.module';
 
 
 @Module({
@@ -35,9 +34,8 @@ import { AuthOutlookModule } from './auth-outlook/auth-outlook.module';
   MotivesModule,
   StudentStateModule,
   UserModule,
-  AuthModule,
   DockModule,
-  AuthOutlookModule
+  Auth0Module
 ],
   controllers: [],
   providers: [],

@@ -8,13 +8,12 @@ import { JwtModule } from '@nestjs/jwt';
 
 @Global()
 @Module({
-
   imports: [TypeOrmModule.forFeature([User]), JwtModule.register({
     secret: process.env.JWT_SECRET_KEY,
     signOptions: { expiresIn: '300m' },
   }),],
   controllers: [UserController],
   providers: [UserService],
-  exports: [TypeOrmModule.forFeature([User])]
+  exports: [TypeOrmModule.forFeature([User]), UserService]
 })
 export class UserModule { }
