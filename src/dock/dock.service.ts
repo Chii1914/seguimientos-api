@@ -144,7 +144,6 @@ export class DockService {
         if (!student) {
             throw new NotFoundException('Estudiante no encontrado');
         }
-        // Obtener todos los seguimientos del estudiante
         const followUps = await this.studentRepository.findOne({
             where: { mail: mail },
             relations: ['followUps'],
@@ -152,9 +151,22 @@ export class DockService {
         if (!followUps) {
             throw new NotFoundException('Seguimientos no encontrados para el estudiante');
         }
+        const todayDate = new Date().toLocaleDateString('es-ES', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        });
+        const studentData ={
+            name: student.name,
+            secondName: student.secondName,
+            lastName: student.fatherLastName,
+            motherLastName: student.motherLastName,
+            rut: student.rut,
+            df: student.df,
+            email: student.mail,
+        }
 
         const dataFollowUps = followUps.followUps.map((item, i) => ({ ...item, index: i + 1 }));
-
         const templatePath = path.resolve(__dirname, './templates/followUps.docx');
         const content = fs.readFileSync(templatePath, 'binary');
         const zip = new PizzZip(content);
@@ -163,8 +175,19 @@ export class DockService {
             linebreaks: true,
         });
         try {
-            doc.render({ followUps: dataFollowUps });
-            
+            doc.render({ 
+                followUps: dataFollowUps,
+                todayDate: todayDate,
+                name: studentData.name,
+                secondName: studentData.secondName,
+                lastName: studentData.lastName,
+                motherLastName: studentData.motherLastName,
+                rut: studentData.rut,
+                df: studentData.df,
+                email: studentData.email,
+       
+            });
+
         } catch (error) {
             console.error('Template rendering failed:', error);
             throw new Error('Template processing error');

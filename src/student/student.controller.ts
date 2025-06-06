@@ -122,8 +122,7 @@ export class StudentController {
     return this.dockService.deleteFile(mail, filename, cat);
   }
 
-  //@UseGuards(AuthGuard('jwt'), UserTypeGuard('admin'))
-
+  @UseGuards(AuthGuard('jwt'), UserTypeGuard('admin'))
   @Get('export-word/:mail')
   async exportOneWord(@Param('mail') mail: string, @Res({ passthrough: false }) res: Response) {
     const buffer = await this.dockService.exportOneWord(mail);
